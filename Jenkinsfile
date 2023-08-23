@@ -32,7 +32,7 @@ pipeline {
                     def imageTag = "${env.BUILD_NUMBER}"
                     def registryURL = "stefaniancu/database"
                     
-                    sh "docker login -u stefaniancu -p SIP@sswordCGS1 ${registryURL}"
+                    sh "docker login -u <username> -p <password> ${registryURL}"
                     sh "docker tag ${imageName}:${imageTag} ${registryURL}/${imageName}:${imageTag}"
                     sh "docker push ${registryURL}/${imageName}:${imageTag}"
                 }
