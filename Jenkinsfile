@@ -1,19 +1,27 @@
 pipeline {
-    agent any
+
+    agent any   
+
     stages {
-        stage('Checkout') {
+
+        stage("build") {
+
             steps {
-                script {
-                checkout([$class: 'GitSCM', branches: [[name: 'main']], userRemoteConfigs: [[url: 'https://github.com/StefanIancu/jenkins-ci.git']]])
-                }
+                echo "building the application..."
             }
         }
-        stage('Build and Push Docker Image') {
+
+        stage("test") {
+
             steps {
-                script {
-                    def dockerImage = docker.build("stefaniancu/qr_gen:${env.BUILD_ID}")
-                    dockerImage.push()
-                }
+                echo "testing the application..."
+            }
+        }    
+
+        stage("deploy") {
+
+            steps {
+                echo "deploying the application..."
             }
         }
     }
