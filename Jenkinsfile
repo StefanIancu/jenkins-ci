@@ -53,4 +53,16 @@ pipeline {
             }
         }
     }
+    post {
+        // after all the stages are done, post is executing 
+        always {
+            // executing always, no matter the status of the build 
+        }
+        success {
+            // executing if the build succeded
+        }
+        failure {
+            // executing if the build failed
+        }    
+    }
 }
