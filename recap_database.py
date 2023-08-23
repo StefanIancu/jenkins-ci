@@ -1,6 +1,6 @@
 import sqlite3
 
-DB_PATH = r"C:\Users\User\Desktop\jenkins\random_database.db"
+DB_PATH = r"C:\Users\User\Desktop\jenkins\jenkins-ci\random_database.db"
 
 connection = sqlite3.connect(DB_PATH)
 cursor = connection.cursor()

@@ -8,14 +8,13 @@ WORKDIR /app
 COPY . .
 
 # Install any needed dependencies + update pip
-RUN pip install --upgrade pip
-RUN pip install -r requirements.txt
+# RUN pip install --upgrade pip
 
 # Make port 8080 available to the world outside this container
-EXPOSE 8080
+EXPOSE 8082
 
 # Define environment variable
-ENV NAME QRCodeGenerator
+ENV NAME Database
 
 # Run the application
-CMD ["python", "/app/qr_gen.py"]
+CMD ["python", "/app/recap_database.py"]
