@@ -12,13 +12,6 @@ pipeline {
             }
         }
 
-        stage('Copy Files') {
-            steps {
-                // Copy the recap_database.py file to the workspace
-                sh 'cp recap_database.py .'
-            }
-        }
-
          stage('Containerize') {
             steps {
                 // Build a Docker image
