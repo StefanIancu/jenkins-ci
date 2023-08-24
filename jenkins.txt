@@ -1,0 +1,165 @@
+
+CODE_CHANGES = getGitChanges()
+pipeline {
+
+    agent any   
+
+    stages {
+
+        stage("build") {
+
+            when {
+                expression {
+                    BRANCH_NAME = "dev" && CODE_CHANGES == true
+                }
+            }
+            // executing only if criteria above is reached
+            steps {
+                echo "building the application..."
+                echo "Application built"
+@@ -40,7 +46,13 @@ pipeline {
+        }
+
+        stage("test") {
+
+            when {
+                expression {
+                    BRANCH_NAME == "dev" || BRANCH_NAME = "main"
+                }
+            }
+            // steps executing only if when expression is true
+            // BRANCH_NAME = env var from jenkins
+            steps {
+                echo "testing the application..."
+            }
+@@ -66,3 +78,115 @@ pipeline {
+        }    
+    }
+}
+
+// Environmental Variables 
+// jenkins -> localhost:8080/env-vars.htmls
+// can also be defined 
+// for credentials variables you need Credentials and Credentials Binding plugins
+
+pipeline {
+    agent any
+    environment {
+        NEW_VERSION = "1.3.0"
+        SERVER_CREDENTIALS = credentials('credentialId')
+    }
+    stages {
+        stage("test") {
+            steps {
+                echo "testing the application..."
+                echo "build verions ${NEW_VERSION}"
+            }
+        }
+        stage("build") {
+            steps {
+                echo "building the application..."
+            }
+        }
+        stage("deploy") {
+            steps {
+                echo "deploying the application..."
+                withCredentials([
+                    usernamePassword("credentialsId", usernameVariable: USER, passwordVariable: PASSWORD)
+                ]) {
+                    sh "some script with credentials ${USER} ${PASSWORD}"
+                }
+            }
+        }
+    }
+}
+
+// access build tools 
+
+pipeline {
+    agent any
+    tools {
+        maven "Maven"
+    }
+    stages {
+        stage("buid") {
+            steps {
+                echo "building..."
+                sh "mvn install"
+            }
+        }
+        stage("test") {
+            steps {
+                echo "testing..."
+            }
+        }
+        stage("deploy") {
+            steps {
+                echo "deploying..."
+            }
+        }
+    }
+}
+
+// parameters and functions
+def gv 
+
+pipeline {
+    agent any
+    parameters {
+        string(name: "VERSION", defaultValue: "", description: "version to deploy on prod")
+        choice(name: "VERSION", choices: ["1.1.0", "1.1.1"], description: "blahblah")
+        booleanParam(name: "executeTests", defaultValue: true, description: "lala")
+    }
+    stages {
+        stage("init") {
+            steps {
+                script {
+                    // import a groovy function from another file
+                    gv = load "script.groovy"
+                }
+            }
+        }
+        stage("build") {
+            steps {
+                script {
+                    gv.buildApp()
+                }
+            }
+        }
+        stage("test") {
+            when {
+                expression {
+                    // if executeTests is set to true, this will execute
+                    params.executeTests == true 
+                }
+            }
+            steps {
+                script {
+                    gv.testApp()
+                }
+            }
+        }
+        stage("deploy") {
+            steps {
+                script {
+                    gv.deployApp()
+                }
+            }
+        }
+    }
+}
+ 14 changes: 14 additions & 0 deletions14  
+script.groovy
+@@ -0,0 +1,14 @@
+def buildApp() {
+    echo "building the application"
+}
+
+def testApp() {
+    echo "testing the application"
+}
+
+def deployApp() {
+    echo "deploying the application"
+    echo "deploying the version ${params.VERSION}"
+}
