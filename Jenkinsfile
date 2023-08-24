@@ -1,3 +1,4 @@
+CODE_CHANGES = getGitChanges()
 pipeline {
     agent any
     stages {
